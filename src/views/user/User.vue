@@ -1,7 +1,7 @@
 <template>
 	<section>
 		<!--工具条-->
-		<el-col span="24" class="toolbar" style="padding-bottom: 0px;">
+		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true">
 				<el-form-item>
 					<el-input placeholder="姓名"></el-input>
@@ -39,3 +39,14 @@
 		</el-table>
 	</section>
 </template>
+
+<script>
+export default {
+	data(){
+		return {
+			listLoading:false
+		}
+	}
+}
+</script>
+
