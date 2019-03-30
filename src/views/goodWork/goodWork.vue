@@ -16,7 +16,7 @@
     </el-col>
 
     <!--列表-->
-    <el-table highlight-current-row v-loading="listLoading" style="width: 100%;">
+    <el-table highlight-current-row :data="mockData" v-loading="listLoading" style="width: 100%;">
       <el-table-column type="selection" style="width: 10%;"></el-table-column>
 
       <el-table-column prop="id" style="width: 10%;" label="ID"></el-table-column>
@@ -30,8 +30,8 @@
       <el-table-column prop="time" style="width: 15%;" label="时间"></el-table-column>
 
       <el-table-column label="操作" style="width: 10%">
-        <template>
-          <el-button size="small">编辑</el-button>
+        <template slot-scope="scope">
+          <el-button size="small" @click="$router.push({path:'/workDetail',query:{id:scope.row.id}})">编辑</el-button>
           <el-button type="danger" size="small">删除</el-button>
         </template>
       </el-table-column>
@@ -43,7 +43,14 @@
 export default {
   data() {
     return {
-      listLoading: false
+      listLoading: false,
+      mockData:[{
+        id:101,
+        name:'我的作品',
+        subject:'计算机',
+        writer:'小王',
+        time:'2019-03-30'
+      }]
     };
   }
 };

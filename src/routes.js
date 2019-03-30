@@ -7,6 +7,7 @@ import have_subject from './views/subject/have_subject.vue'
 import teacher_subject from './views/subject/teacher_subject.vue'
 import User from './views/user/User.vue'
 import goodWork from './views/goodWork/goodWork'
+import workDetail from './views/goodWork/workDetail'
 
 import auto_paper from './views/paper/auto_paper'
 import manual_paper from './views/paper/manual_paper'
@@ -43,9 +44,11 @@ let routes = [
         component:Home,
         name:'优秀作品管理',
         iconCls:'fa fa-heart-o',
+        hidden:true,
         leaf:true,
         children:[
-            {path:'/goodWork',component:goodWork,name:'优秀作品'}
+            {path:'/goodWork',component:goodWork,name:'优秀作品'},
+            {path:'/workDetail',component:workDetail,name:'作品详情'}
         ]
     },
 
