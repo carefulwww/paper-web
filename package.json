@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "axios": "^0.15.3",
+    "codemirror": "^5.45.0",
     "echarts": "^3.3.2",
     "element-ui": "^2.4.11",
     "font-awesome": "^4.7.0",
     "nprogress": "^0.2.0",
     "vue": "^2.2.2",
+    "vue-codemirror": "^4.0.6",
     "vue-router": "^2.3.0",
     "vuex": "^2.0.0-rc.6"
   },

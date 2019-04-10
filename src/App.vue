@@ -63,4 +63,8 @@ body {
 .fade-leave-active {
 	opacity: 0;
 }
+
+.vue-codemirror .CodeMirror{
+	height: 80vh !important;
+}
 </style>

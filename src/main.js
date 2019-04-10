@@ -13,7 +13,10 @@ import routes from './routes'
 import Mock from './mock'
 Mock.bootstrap();
 import 'font-awesome/css/font-awesome.min.css'
+import VueCodemirror from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
 
+Vue.use(VueCodemirror)
 Vue.use(ElementUI)
 Vue.use(VueRouter)
 Vue.use(Vuex)
