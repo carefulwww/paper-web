@@ -10,7 +10,7 @@ export function addQuestion(data) {
 
 export function delQuestion(data) {
   return request({
-    url: `/paperWebAPI/question/delQuestion?ids=${data.ids}`,
+    url: `/paperWebAPI/question/delQuestion?ids=${data.uuid}`,
     method: 'delete',
     data
   })

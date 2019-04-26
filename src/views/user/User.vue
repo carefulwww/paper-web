@@ -4,13 +4,13 @@
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true">
 				<el-form-item>
-					<el-input placeholder="姓名"></el-input>
+					<el-input v-model="searchName" placeholder="用户名"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary">查询</el-button>
+					<el-button type="primary" @click="getList(searchName)">查询</el-button>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary">新增</el-button>
+					<el-button type="primary" @click="handleAdd">新增</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
@@ -55,10 +55,10 @@
 			</el-table-column>
 
 			<el-table-column label="操作" width="300px" align="center" fixed="right">
-				<template>
-					<el-button size="small">编辑</el-button>
-					<el-button size="small">重置密码</el-button>
-					<el-button size="small" type="danger">删除</el-button>
+				<template slot-scope="scope">
+					<el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
+					<el-button size="small" @click="resetPassword(scope.row)">重置密码</el-button>
+					<el-button size="small" type="danger" @click="deleteUser(scope.row)">删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -70,6 +70,21 @@
         @pagination="getList"
         style="margin-top:20px"
       />
+			<el-dialog
+				:visible.sync="showDialog"
+				:title="dialogTitle"
+				:before-close="handleClose"
+				style="text-align:center;padding: 0 20px"
+			>
+				<user-info-form
+					ref="userForm"
+					:data="tmpData"
+					:is-created="dialogTitle!=='新增用户'"
+					@add="addUser"
+					@update="updateUser"
+					@close="handleClose"
+				/>
+			</el-dialog>
 	</section>
 </template>
 
@@ -77,6 +92,7 @@
 import UserAPI from '@/api/user'
 import Pagination from '@/components/Pagination'
 import userDic from '@/utils/dic/user'
+import UserInfoForm from './components/userInfoForm'
 export default {
   data() {
     return {
@@ -87,10 +103,14 @@ export default {
         pageSize: 10
       },
       total: 0,
-      userDic: userDic
+      userDic: userDic,
+      dialogTitle: '',
+      showDialog: false,
+      tmpData: {},
+      searchName: ''
     }
   },
-  components: { Pagination },
+  components: { Pagination, UserInfoForm },
   filters: {
     filterByDic(val, dic) {
       // debugger
@@ -103,10 +123,15 @@ export default {
     this.getList()
   },
   methods: {
-    async getList() {
+    async getList(arg) {
       this.listLoading = true
 
       const vm = this
+      if (arg) {
+        this.listQuery = Object.assign({}, this.listQuery, { userName: arg })
+      } else {
+        this.$delete(this.listQuery, 'userName')
+      }
       await UserAPI.getUser(this.listQuery).then(res => {
         if (res && res.data && res.data.successful) {
           // debugger
@@ -124,6 +149,104 @@ export default {
         }
       })
       this.listLoading = false
+    },
+    handleAdd() {
+      this.dialogTitle = '新增用户'
+      this.showDialog = true
+      this.$set(this.tmpData, 'password', '123456')
+    },
+    handleEdit(row) {
+      this.dialogTitle = '编辑用户'
+      this.showDialog = true
+      this.tmpData = Object.assign({}, row)
+    },
+    resetPassword(row) {
+      const vm = this
+      this.$confirm('是否将该用户密码重置为123456？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        const data = Object.assign({}, row, { password: '123456' })
+        UserAPI.updateUser(data).then(res => {
+          if (res && res.data && res.data.successful) {
+            vm.$message({
+              type: 'success',
+              message: '用户信息更新成功'
+            })
+            vm.getList()
+          } else {
+            vm.$message({
+              type: 'error',
+              message: res.data.statusMessage
+            })
+          }
+        })
+      })
+    },
+    handleClose() {
+      this.tmpData = {}
+      this.showDialog = false
+      // debugger
+      this.$refs.userForm.$refs.userInfoData.resetFields()
+    },
+    async addUser(data) {
+      const vm = this
+      await UserAPI.addUser(data).then(res => {
+        if (res && res.data && res.data.successful) {
+          vm.$message({
+            type: 'success',
+            message: '用户添加成功'
+          })
+          vm.getList()
+        } else {
+          vm.$message({
+            type: 'error',
+            message: res.data.statusMessage
+          })
+        }
+      })
+      this.handleClose()
+    },
+    async updateUser(data) {
+      const vm = this
+      this.$delete(data, 'updateTime')
+      await UserAPI.updateUser(data).then(res => {
+        if (res && res.data && res.data.successful) {
+          vm.$message({
+            type: 'success',
+            message: '用户信息更新成功'
+          })
+          vm.getList()
+        } else {
+          vm.$message({
+            type: 'error',
+            message: res.data.statusMessage
+          })
+        }
+      })
+      this.handleClose()
+    },
+    deleteUser(row) {
+      const vm = this
+      this.$confirm('是否确认删除该用户', '提示', {
+        type: 'warning'
+      }).then(() => {
+        // debugger
+        UserAPI.deleteUser(row).then(res => {
+          // debugger
+          if (res && res.status === 200) {
+            vm.$message({
+              type: 'success',
+              message: '删除用户成功'
+            })
+            vm.getList()
+          } else {
+            vm.$message({
+              type: 'error',
+              message: res.data.statusMessage
+            })
+          }
+        })
+      }).catch()
     }
   }
 }

@@ -10,9 +10,8 @@ export function addUser(data) {
 
 export function deleteUser(data) {
   return request({
-    url: `/paperWebAPI/user/delete?userId=${data.userId}`,
-    method: 'delete',
-    data
+    url: `/paperWebAPI/user/delete?userId=${data.uuid}`,
+    method: 'delete'
   })
 }
 

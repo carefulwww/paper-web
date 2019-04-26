@@ -10,7 +10,7 @@ export function addRelation(data) {
 
 export function delRelation(data) {
   return request({
-    url: `/paperWebAPI/teacherSubjectRelation/delRelation?id=${data.id}`,
+    url: `/paperWebAPI/teacherSubjectRelation/delRelation?id=${data.uuid}`,
     method: 'delete',
     data
   })

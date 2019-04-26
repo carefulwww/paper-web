@@ -4,10 +4,13 @@
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="filters">
 				<el-form-item>
-					<el-input v-model="filters.name" placeholder="姓名"></el-input>
+					<el-input v-model="filters.id" placeholder="所属科目ID"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" v-on:click="getList">查询</el-button>
+					<el-button type="primary" v-on:click="getList" @click="getList(filters.id)">查询</el-button>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click="handleAdd">新增</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
@@ -75,6 +78,12 @@
 					<span>{{scope.row.updateTime*1000|formatDate('yyyy-MM-dd')}}</span>
 				</template>
 			</el-table-column>
+			<el-table-column label="操作" width="160px" align="center" fixed="right">
+				<template slot-scope="scope">
+					<el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
+					<el-button size="small" type="danger" @click="deleteQuestion(scope.row)">删除</el-button>
+				</template>
+			</el-table-column>
 			</el-table>
 			<pagination
         v-show="total>0"
@@ -84,6 +93,21 @@
         @pagination="getList"
         style="margin-top:20px"
       />
+			<el-dialog
+				:visible.sync="showDialog"
+				:title="dialogTitle"
+				:before-close="handleClose"
+				style="text-align:center;padding: 0 20px"
+			>
+				<questions-form
+					ref="questionsForm"
+					:data="tmpData"
+					:is-created="dialogTitle!=='新增试题'"
+					@add="addQuestion"
+					@update="updateQuestion"
+					@close="handleClose"
+				/>
+			</el-dialog>
 		</template>
 		<shopping-cart :users="cartList" />
 	</section>
@@ -92,12 +116,13 @@
 import QuestionAPI from '@/api/questions'
 import shoppingCart from '../../components/shoppingCart'
 import Pagination from '@/components/Pagination'
+import QuestionsForm from './components/questionsForm'
 // import NProgress from 'nprogress'
 export default {
   data() {
     return {
       filters: {
-        name: ''
+        id: ''
       },
       loading: false,
       questionList: [
@@ -107,12 +132,16 @@ export default {
         pageNum: 1,
         pageSize: 10
       },
-      total: 0
+      total: 0,
+      dialogTitle: '',
+      showDialog: false,
+      tmpData: {}
     }
   },
   components: {
     shoppingCart,
-    Pagination
+    Pagination,
+    QuestionsForm
   },
   methods: {
     add(row) {
@@ -137,10 +166,14 @@ export default {
         type: 'success'
       })
     },
-    async getList() {
+    async getList(arg) {
       this.listLoading = true
-
       const vm = this
+      if (arg) {
+        this.listQuery = Object.assign({}, this.listQuery, { subjectId: arg })
+      } else {
+        this.$delete(this.listQuery, 'subjectId')
+      }
       await QuestionAPI.getQuestion(this.listQuery).then(res => {
         if (res && res.data && res.data.successful) {
           // debugger
@@ -158,6 +191,82 @@ export default {
         }
       })
       this.listLoading = false
+    },
+    handleAdd() {
+      this.dialogTitle = '新增试题'
+      this.showDialog = true
+      this.$set(this.tmpData, 'createUserId', this.$store.state.user.uuid)
+    },
+    handleEdit(row) {
+      this.dialogTitle = '编辑试题'
+      this.showDialog = true
+      this.tmpData = Object.assign({}, row)
+    },
+    handleClose() {
+      this.tmpData = {}
+      this.showDialog = false
+      // debugger
+      this.$refs.questionsForm.$refs.qusetionsData.resetFields()
+    },
+    async addQuestion(data) {
+      const vm = this
+      await QuestionAPI.addQuestion(data).then(res => {
+        if (res && res.data && res.data.successful) {
+          vm.$message({
+            type: 'success',
+            message: '试题添加成功'
+          })
+          vm.getList()
+        } else {
+          vm.$message({
+            type: 'error',
+            message: res.data.statusMessage
+          })
+        }
+      })
+      this.handleClose()
+    },
+    async updateQuestion(data) {
+      const vm = this
+      this.$delete(data, 'updateTime')
+      await QuestionAPI.updateQuestion(data).then(res => {
+        if (res && res.data && res.data.successful) {
+          vm.$message({
+            type: 'success',
+            message: '试题更新成功'
+          })
+          vm.getList()
+        } else {
+          vm.$message({
+            type: 'error',
+            message: res.data.statusMessage
+          })
+        }
+      })
+      this.handleClose()
+    },
+    deleteQuestion(row) {
+      const vm = this
+      this.$confirm('是否确认删除该试题', '提示', {
+        type: 'warning'
+      }).then(() => {
+        // debugger
+        QuestionAPI.delQuestion(row).then(res => {
+          // debugger
+          if (res && res.status === 200) {
+            vm.$message({
+              type: 'success',
+              message: '删除试题成功'
+            })
+            vm.getList()
+          } else {
+            vm.$message({
+              type: 'error',
+              message: res.data.statusMessage
+            })
+          }
+        })
+      }).catch()
     }
   },
   mounted() {

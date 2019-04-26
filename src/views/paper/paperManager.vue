@@ -2,9 +2,12 @@
   <section>
     <!--工具条-->
     <el-col :span="24" class="toolbar" style="padding-bottom: 0px">
-      <el-form :inline="true">
+      <el-form :inline="true" :model="filters">
         <el-form-item>
-          <el-input placeholder="试卷名称"></el-input>
+          <el-input v-model="filters.name" placeholder="试卷名称"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="filters.subjectId" placeholder="科目ID"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary">查询</el-button>
@@ -79,6 +82,10 @@ import Pagination from '@/components/Pagination'
 export default {
   data() {
     return {
+      filters: {
+        id: '',
+        subjectId: ''
+      },
       listLoading: false,
       list: [],
       listQuery: {
