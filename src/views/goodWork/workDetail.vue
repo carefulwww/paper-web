@@ -18,7 +18,7 @@ import 'codemirror/mode/clike/clike'
 export default {
   data() {
     return {
-      id: "",
+      id: '',
       code: `#include<stdio.h>
 /*分鱼递归函数*/
 int fish(int n, int x)
@@ -48,13 +48,13 @@ int main()
     while(!flag);  /*未找到符合题意的x，继续循环，否则退出循环*/
     return 0;
 }`,
-    editorOption:{
+      editorOption: {
 
+      }
     }
-    };
   },
-  computed:{
-    editor(){
+  computed: {
+    editor() {
       return this.$refs.myEditor.editor
     }
   },
@@ -64,10 +64,10 @@ int main()
   },
   methods: {
     getCode() {
-      //通过作品id获得作品代码
+      // 通过作品id获得作品代码
     }
   }
-};
+}
 </script>
 <style scoped>
 </style>

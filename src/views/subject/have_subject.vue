@@ -18,33 +18,100 @@
     </el-col>
 
     <!--列表-->
-    <el-table highlight-current-row v-loading="listLoading" style="width: 100%;">
-      <el-table-column type="selection" style="width: 10%;"></el-table-column>
+    <el-table :data="list" highlight-current-row v-loading="listLoading" fit style="width: 100%;">
+      <el-table-column label="序号" align="center" width="65px">
+				<template slot-scope="scope">
+					<span>{{scope.$index+1}}</span>
+				</template>
+			</el-table-column>
+      <el-table-column label="科目ID" align="center" width="280px">
+				<template slot-scope="scope">
+					<span>{{scope.row.uuid}}</span>
+				</template>
+			</el-table-column>
+      <el-table-column label="创建人ID" align="center" width="280px">
+				<template slot-scope="scope">
+					<span>{{scope.row.createUserId}}</span>
+				</template>
+			</el-table-column>
+      <el-table-column label="科目名称" align="center">
+				<template slot-scope="scope">
+					<span>{{scope.row.subjectName}}</span>
+				</template>
+			</el-table-column>
+      <el-table-column label="创建时间" align="center">
+				<template slot-scope="scope">
+					<span>{{scope.row.createTime*1000|formatDate('yyyy-MM-dd')}}</span>
+				</template>
+			</el-table-column>
+			<el-table-column label="更新时间" align="center">
+				<template slot-scope="scope">
+					<span>{{scope.row.updateTime*1000|formatDate('yyyy-MM-dd')}}</span>
+				</template>
+			</el-table-column>
 
-      <el-table-column prop="id" style="width: 10%;" label="ID"></el-table-column>
-
-      <el-table-column prop="name" style="width: 35%;" label="科目名称"></el-table-column>
-
-      <el-table-column prop="time" style="width: 35%;" label="创建时间"></el-table-column>
-
-      <el-table-column label="操作" style="width: 10%">
+      <el-table-column label="操作" align="center" fixed="right">
         <template>
           <el-button size="small">编辑</el-button>
           <el-button type="danger" size="small">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="listQuery.pageNum"
+        :limit.sync="listQuery.pageSize"
+        @pagination="getList"
+        style="margin-top:20px"
+      />
   </section>
 </template>
 
 <script>
+import SubjectAPI from '@/api/subject'
+import Pagination from '@/components/Pagination'
 export default {
   data() {
     return {
-      listLoading: false
-    };
+      listLoading: false,
+      list: [],
+      listQuery: {
+        pageNum: 1,
+        pageSize: 10
+      },
+      total: 0
+    }
+  },
+  components: { Pagination },
+  created() {
+    this.getList()
+  },
+  methods: {
+    async getList() {
+      this.listLoading = true
+
+      const vm = this
+      await SubjectAPI.getSubject(this.listQuery).then(res => {
+        if (res && res.data && res.data.successful) {
+          // debugger
+          this.list = res.data.data.list
+          this.total = res.data.data.total
+          // vm.$message({
+          //   type: 'success',
+          //   message: '用户表加载成功'
+          // })
+        } else {
+          vm.$message({
+            type: 'error',
+            message: res.data.statusMessage
+          })
+        }
+      })
+      this.listLoading = false
+    }
   }
-};
+}
 </script>
 
 <style scoped>

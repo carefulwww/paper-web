@@ -1,0 +1,9 @@
+/* 此处覆盖element原生样式 */
+
+.el-form{
+  overflow: hidden;
+}
+
+.el-scrollbar__wrap {
+  overflow-x: hidden;
+}

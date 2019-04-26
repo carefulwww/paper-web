@@ -16,20 +16,44 @@
     </el-col>
 
     <!--列表-->
-    <el-table highlight-current-row v-loading="listLoading" style="width: 100%;">
-      <el-table-column type="selection" style="width: 10%;"></el-table-column>
+    <el-table :data="list" fit highlight-current-row v-loading="listLoading" style="width: 100%;">
+      <el-table-column label="序号" align="center" width="65px">
+				<template slot-scope="scope">
+					<span>{{scope.$index+1}}</span>
+				</template>
+			</el-table-column>
+      <el-table-column label="试卷ID" align="center" width="280px">
+				<template slot-scope="scope">
+					<span>{{scope.row.uuid}}</span>
+				</template>
+			</el-table-column>
+      <el-table-column label="试卷名称" align="center" >
+				<template slot-scope="scope">
+					<span>{{scope.row.paperName}}</span>
+				</template>
+			</el-table-column>
+      <el-table-column label="科目ID" align="center" width="280px">
+				<template slot-scope="scope">
+					<span>{{scope.row.subjectId}}</span>
+				</template>
+			</el-table-column>
+      <el-table-column label="创建人ID" align="center" width="280px">
+				<template slot-scope="scope">
+					<span>{{scope.row.createUserId}}</span>
+				</template>
+			</el-table-column>
+      <el-table-column label="创建时间" align="center">
+				<template slot-scope="scope">
+					<span>{{scope.row.createTime*1000|formatDate('yyyy-MM-dd')}}</span>
+				</template>
+			</el-table-column>
+			<el-table-column label="更新时间" align="center">
+				<template slot-scope="scope">
+					<span>{{scope.row.updateTime*1000|formatDate('yyyy-MM-dd')}}</span>
+				</template>
+			</el-table-column>
 
-      <el-table-column prop="id" style="width: 10%;" label="ID"></el-table-column>
-
-      <el-table-column prop="name" style="width: 20%;" label="试卷名称"></el-table-column>
-
-      <el-table-column prop="subject" style="width: 10%;" label="所属科目"></el-table-column>
-
-      <el-table-column prop="writer" style="width: 15%;" label="出卷人"></el-table-column>
-
-      <el-table-column prop="time" style="width: 15%;" label="时间"></el-table-column>
-
-      <el-table-column label="操作" style="width: 20%">
+      <el-table-column label="操作" align="center">
         <template>
           <el-button size="small">详情</el-button>
           <el-button size="small">下载</el-button>
@@ -38,17 +62,61 @@
         </template>
       </el-table-column>
     </el-table>
+    <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="listQuery.pageNum"
+        :limit.sync="listQuery.pageSize"
+        @pagination="getList"
+        style="margin-top:20px"
+      />
   </section>
 </template>
 
 <script>
+import PaperAPI from '@/api/paper'
+import Pagination from '@/components/Pagination'
 export default {
   data() {
     return {
-      listLoading: false
-    };
+      listLoading: false,
+      list: [],
+      listQuery: {
+        pageNum: 1,
+        pageSize: 10
+      },
+      total: 0
+    }
+  },
+  components: { Pagination },
+  created() {
+    this.getList()
+  },
+  methods: {
+    async getList() {
+      this.listLoading = true
+
+      const vm = this
+      await PaperAPI.getPaper(this.listQuery).then(res => {
+        if (res && res.data && res.data.successful) {
+          // debugger
+          this.list = res.data.data.list
+          this.total = res.data.data.total
+          // vm.$message({
+          //   type: 'success',
+          //   message: '用户表加载成功'
+          // })
+        } else {
+          vm.$message({
+            type: 'error',
+            message: res.data.statusMessage
+          })
+        }
+      })
+      this.listLoading = false
+    }
   }
-};
+}
 </script>
 
 <style scoped>

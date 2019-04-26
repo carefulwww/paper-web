@@ -15,60 +15,72 @@
 </template>
 
 <script>
-  import { requestLogin } from '../api/api';
-  //import NProgress from 'nprogress'
+  // import UserAPI from '@/api/user';
+  // import NProgress from 'nprogress'
   export default {
     data() {
       return {
         logining: false,
         ruleForm2: {
-          account: 'admin',
-          checkPass: '123456'
+          account: '',
+          checkPass: ''
         },
         rules2: {
           account: [
-            { required: true, message: '请输入账号', trigger: 'blur' },
-            //{ validator: validaePass }
+            { required: true, message: '请输入账号', trigger: 'blur' }
+            // { validator: validaePass }
           ],
           checkPass: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
-            //{ validator: validaePass2 }
+            { required: true, message: '请输入密码', trigger: 'blur' }
+            // { validator: validaePass2 }
           ]
         },
         checked: true
-      };
+      }
     },
     methods: {
       handleReset2() {
-        this.$refs.ruleForm2.resetFields();
+        this.$refs.ruleForm2.resetFields()
       },
       handleSubmit2(ev) {
-        var _this = this;
+        var vm = this
         this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
-            //_this.$router.replace('/table');
-            this.logining = true;
-            //NProgress.start();
-            var loginParams = { username: this.ruleForm2.account, password: this.ruleForm2.checkPass };
-            requestLogin(loginParams).then(data => {
-              this.logining = false;
-              //NProgress.done();
-              let { msg, code, user } = data;
-              if (code !== 200) {
-                this.$message({
-                  message: msg,
-                  type: 'error'
-                });
+            // _this.$router.replace('/table');
+            this.logining = true
+            // NProgress.start();
+            var loginParams = { userName: this.ruleForm2.account, password: this.ruleForm2.checkPass }
+            this.$store.dispatch('Login', loginParams).then(res => {
+              this.logining = false
+              // //NProgress.done();
+              // let { msg, code, user } = data;
+              // if (code !== 200) {
+              //   this.$message({
+              //     message: msg,
+              //     type: 'error'
+              //   });
+              // } else {
+              //   sessionStorage.setItem('user', JSON.stringify(user));
+              //   this.$router.push({ path: '/User' });
+              // }
+              if (res && res.data && res.data.successful) {
+                vm.$message({
+                  type: 'success',
+                  message: '登录成功'
+                })
+                vm.$router.push({ path: '/User' })
               } else {
-                sessionStorage.setItem('user', JSON.stringify(user));
-                this.$router.push({ path: '/User' });
+                vm.$message({
+                  type: 'error',
+                  message: res.data.statusMessage
+                })
               }
-            });
+            })
           } else {
-            console.log('error submit!!');
-            return false;
+            console.log('error submit!!')
+            return false
           }
-        });
+        })
       }
     }
 

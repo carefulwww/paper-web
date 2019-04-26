@@ -12,23 +12,53 @@
         <span>组卷车</span>
         <el-button type="primary" size="mini" style="float:right">出卷</el-button>
       </div>
+      <div style="width: 550px;height: 70vh;">
+
+      <el-scrollbar style="height:100%;">
+
       <el-table :data="users" style="width: 100%;">
         <el-table-column type="expand">
           <template slot-scope="props">
-            <el-form label-position="left">
-              <el-form-item label="生日">
-                <span>{{ props.row.birth }}</span>
+            <el-form label-position="left" >
+							<el-form-item label="出题人ID">
+                <span>{{ props.row.createUserId }}</span>
               </el-form-item>
-              <el-form-item label="地址">
-                <span>{{ props.row.addr }}</span>
+              <el-form-item label="试题内容">
+                <span>{{ props.row.questionContent }}</span>
+              </el-form-item>
+              <el-form-item label="试题选项">
+                <span>{{ props.row.options }}</span>
+              </el-form-item>
+              <el-form-item label="试题答案">
+                <span>{{ props.row.answer }}</span>
+              </el-form-item>
+							<el-form-item label="试题分值">
+                <span>{{ props.row.score }}</span>
+              </el-form-item>
+							<el-form-item label="试题难度">
+                <span>{{ props.row.difficulty }}</span>
               </el-form-item>
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="姓名" sortable></el-table-column>
-        <el-table-column prop="sex" label="性别" :formatter="formatSex" sortable></el-table-column>
-        <el-table-column prop="age" label="年龄" sortable></el-table-column>
+			<el-table-column label="序号" align="center" width="65px">
+				<template slot-scope="scope">
+					<span>{{scope.$index+1}}</span>
+				</template>
+			</el-table-column>
+			<el-table-column label="试题类型" align="center">
+				<template slot-scope="scope">
+					<span>{{scope.row.type}}</span>
+				</template>
+			</el-table-column>
+			<el-table-column label="所属科目ID" align="center" width="280px">
+				<template slot-scope="scope">
+					<span>{{scope.row.subjectId}}</span>
+				</template>
+			</el-table-column>
       </el-table>
+      </el-scrollbar>
+      </div>
     </el-card>
   </div>
 </template>
@@ -44,14 +74,12 @@ export default {
   data() {
     return {
       isShow: false
-    };
+    }
   },
   methods: {
-    formatSex: function(row, column) {
-      return row.sex == 1 ? "男" : row.sex == 0 ? "女" : "未知";
-    }
+
   }
-};
+}
 </script>
 
 <style scoped>
@@ -68,8 +96,6 @@ export default {
   bottom: 70px;
   z-index: 3000;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.2);
-  width: 60vh;
-  height: 80vh;
   /* opacity: 0.2; */
 }
 /* .cartDialog:hover{
