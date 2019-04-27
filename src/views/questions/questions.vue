@@ -7,7 +7,7 @@
 					<el-input v-model="filters.id" placeholder="所属科目ID"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" v-on:click="getList" @click="getList(filters.id)">查询</el-button>
+					<el-button type="primary" @click="getList('id')">查询</el-button>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="handleAdd">新增</el-button>
@@ -169,8 +169,8 @@ export default {
     async getList(arg) {
       this.listLoading = true
       const vm = this
-      if (arg) {
-        this.listQuery = Object.assign({}, this.listQuery, { subjectId: arg })
+      if (arg === 'id') {
+        this.listQuery = Object.assign({}, this.listQuery, { subjectId: this.filters.id })
       } else {
         this.$delete(this.listQuery, 'subjectId')
       }

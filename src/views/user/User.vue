@@ -7,7 +7,7 @@
 					<el-input v-model="searchName" placeholder="用户名"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click="getList(searchName)">查询</el-button>
+					<el-button type="primary" @click="getList('name')">查询</el-button>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="handleAdd">新增</el-button>
@@ -127,9 +127,10 @@ export default {
       this.listLoading = true
 
       const vm = this
-      if (arg) {
-        this.listQuery = Object.assign({}, this.listQuery, { userName: arg })
+      if (arg === 'name') {
+        this.listQuery = Object.assign({}, this.listQuery, { userName: this.searchName })
       } else {
+        // debugger
         this.$delete(this.listQuery, 'userName')
       }
       await UserAPI.getUser(this.listQuery).then(res => {
