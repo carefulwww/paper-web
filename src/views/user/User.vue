@@ -25,11 +25,11 @@
 				</template>
 			</el-table-column>
 
-			<el-table-column label="ID" align="center" width="280px">
+			<!-- <el-table-column label="ID" align="center" width="280px">
 				<template slot-scope="scope">
 					<span>{{scope.row.uuid}}</span>
 				</template>
-			</el-table-column>
+			</el-table-column> -->
 			<el-table-column label="用户名" align="center">
 				<template slot-scope="scope">
 					<span>{{scope.row.userName}}</span>

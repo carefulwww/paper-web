@@ -27,11 +27,11 @@
 					<span>{{scope.$index+1}}</span>
 				</template>
 			</el-table-column>
-      <el-table-column label="科目ID" align="center" width="280px">
+      <!-- <el-table-column label="科目ID" align="center" width="280px">
 				<template slot-scope="scope">
 					<span>{{scope.row.uuid}}</span>
 				</template>
-			</el-table-column>
+			</el-table-column> -->
       <el-table-column label="创建人ID" align="center" width="280px">
 				<template slot-scope="scope">
 					<span>{{scope.row.createUserId}}</span>

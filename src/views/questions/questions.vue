@@ -53,11 +53,11 @@
 					<span>{{scope.$index+1}}</span>
 				</template>
 			</el-table-column>
-			<el-table-column label="试题ID" align="center" width="280px">
+			<!-- <el-table-column label="试题ID" align="center" width="280px">
 				<template slot-scope="scope">
 					<span>{{scope.row.uuid}}</span>
 				</template>
-			</el-table-column>
+			</el-table-column> -->
 			<el-table-column label="试题类型" align="center">
 				<template slot-scope="scope">
 					<span>{{scope.row.type}}</span>

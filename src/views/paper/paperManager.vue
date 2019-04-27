@@ -25,11 +25,11 @@
 					<span>{{scope.$index+1}}</span>
 				</template>
 			</el-table-column>
-      <el-table-column label="试卷ID" align="center" width="280px">
+      <!-- <el-table-column label="试卷ID" align="center" width="280px">
 				<template slot-scope="scope">
 					<span>{{scope.row.uuid}}</span>
 				</template>
-			</el-table-column>
+			</el-table-column> -->
       <el-table-column label="试卷名称" align="center" >
 				<template slot-scope="scope">
 					<span>{{scope.row.paperName}}</span>
