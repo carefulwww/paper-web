@@ -17,7 +17,7 @@
 
 		<!--列表-->
 		<template>
-			<el-table :data="questionList" v-loading="loading" fit highlight-current-row :row-key="questionList.uuid" :current-row-key="0" >
+			<el-table :data="questionList" v-loading="loading" fit >
 				<el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" >
@@ -42,7 +42,7 @@
             </el-form>
           </template>
         </el-table-column>
-				<el-table-column label="添加到组卷车" width="70" fixed="left" disabled>
+				<el-table-column label="添加到组卷车" width="70" fixed="left">
         <template slot-scope="scope">
           <el-button v-if="!scope.row.isAdd" size="small" icon="el-icon-plus" circle @click="add(scope.row)"></el-button>
 					<el-button v-else size="small" type="success" icon="el-icon-check" circle @click="deleteR(scope.row)"></el-button>
@@ -94,6 +94,7 @@
         style="margin-top:20px"
       />
 			<el-dialog
+				:key="1"
 				:visible.sync="showDialog"
 				:title="dialogTitle"
 				:before-close="handleClose"
@@ -108,15 +109,32 @@
 					@close="handleClose"
 				/>
 			</el-dialog>
+			<el-dialog
+				:key="2"
+				:visible.sync="showDialog1"
+				title="试卷预览并发布"
+				:before-close="handleClose1"
+				style="text-align:center;padding: 0 20px"
+			>
+				<pre-Paper
+					ref="prePaperForm"
+					:list="cartList"
+					@add="addPaper"
+					@close="handleClose1"
+				/>
+			</el-dialog>
 		</template>
-		<shopping-cart :users="cartList" />
+		<shopping-cart :list="cartList" @rollOut="rollOut" />
 	</section>
 </template>
 <script>
 import QuestionAPI from '@/api/questions'
-import shoppingCart from '../../components/shoppingCart'
+import PaperAPI from '@/api/paper'
+import PaperQuestionAPI from '@/api/paperQuestion'
+import shoppingCart from './components/shoppingCart'
 import Pagination from '@/components/Pagination'
 import QuestionsForm from './components/questionsForm'
+import prePaper from './components/prePaper'
 // import NProgress from 'nprogress'
 export default {
   data() {
@@ -135,28 +153,31 @@ export default {
       total: 0,
       dialogTitle: '',
       showDialog: false,
+      showDialog1: false,
       tmpData: {}
     }
   },
   components: {
     shoppingCart,
     Pagination,
-    QuestionsForm
+    QuestionsForm,
+    prePaper
   },
   methods: {
     add(row) {
-      row.isAdd = true
+      // row.isAdd = true
+      this.$set(row, 'isAdd', true)
       this.cartList.push(row)
-      this.$message({
-        message: '添加试题到组卷车成功！',
-        type: 'success'
-      })
+      // this.$message({
+      //   message: '添加试题到组卷车成功！',
+      //   type: 'success'
+      // })
       this.$nextTick()
     },
     deleteR(row) {
       row.isAdd = false
       this.cartList.map((e, i) => {
-        if (e.id === row.id) {
+        if (e.uuid === row.uuid) {
           this.cartList.splice(i, 1)
           return
         }
@@ -191,6 +212,20 @@ export default {
         }
       })
       this.listLoading = false
+      // 重新getlist后，将原先购物车里的题的前面打上勾
+      this.cartList.map(e => {
+        const tmp = this.questionList.find(i => i.uuid === e.uuid)
+        if (tmp) {
+          this.$set(tmp, 'isAdd', true)
+          e = tmp
+          debugger
+        } else {
+          this.$message({
+            type: 'warning',
+            message: '以加入购物车的试题可能以及被删除'
+          })
+        }
+      })
     },
     handleAdd() {
       this.dialogTitle = '新增试题'
@@ -207,6 +242,11 @@ export default {
       this.showDialog = false
       // debugger
       this.$refs.questionsForm.$refs.qusetionsData.resetFields()
+    },
+    handleClose1() {
+      this.showDialog1 = false
+      // debugger
+      this.$refs.prePaperForm.$refs.prePaperData.resetFields()
     },
     async addQuestion(data) {
       const vm = this
@@ -225,6 +265,45 @@ export default {
         }
       })
       this.handleClose()
+    },
+    async addPaper(data) {
+      // debugger
+      let paperId = ''
+      this.$set(data, 'createUserId', this.$store.state.user.uuid)
+      await PaperAPI.addPaper(data).then(res => {
+        if (res && res.data && res.data.successful) {
+          this.$message({
+            type: 'success',
+            message: '试卷添加成功'
+          })
+          paperId = res.data.data
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.data.statusMessage
+          })
+        }
+      })
+      if (paperId) {
+        const ids = this.cartList.map(e => e.uuid)
+        const data1 = {
+          createUserId: this.$store.state.user.uuid,
+          paperId: paperId,
+          questionId: ids
+        }
+        // debugger
+        await PaperQuestionAPI.addRelation(data1).then(res => {
+          if (res && res.data && res.data.successful) {
+            //
+          } else {
+            this.$message({
+              type: 'error',
+              message: res.data.statusMessage
+            })
+          }
+        })
+        this.handleClose1()
+      }
     },
     async updateQuestion(data) {
       const vm = this
@@ -267,6 +346,9 @@ export default {
           }
         })
       }).catch()
+    },
+    rollOut() {
+      this.showDialog1 = true
     }
   },
   mounted() {

@@ -10,13 +10,13 @@
     <el-card class="cartDialog" v-if="isShow">
       <div slot="header" class="clearfix">
         <span>组卷车</span>
-        <el-button type="primary" size="mini" style="float:right">出卷</el-button>
+        <el-button type="primary" size="mini" style="float:right" @click="rollOut">出卷</el-button>
       </div>
       <div style="width: 550px;height: 70vh;">
 
       <el-scrollbar style="height:100%;">
 
-      <el-table :data="users" style="width: 100%;">
+      <el-table :data="list" style="width: 100%;">
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" >
@@ -66,7 +66,7 @@
 <script>
 export default {
   props: {
-    users: {
+    list: {
       type: Array,
       default: []
     }
@@ -77,7 +77,10 @@ export default {
     }
   },
   methods: {
-
+    rollOut() {
+      this.$emit('rollOut')
+      this.isShow = false
+    }
   }
 }
 </script>

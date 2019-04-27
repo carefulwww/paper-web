@@ -56,7 +56,7 @@
 				</template>
 			</el-table-column>
 
-      <el-table-column label="操作" align="center">
+      <el-table-column label="操作" align="center" width="300px" fixed="right">
         <template>
           <el-button size="small">详情</el-button>
           <el-button size="small">下载</el-button>
