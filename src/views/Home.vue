@@ -27,14 +27,14 @@
 				<el-menu :default-active="$route.path" class="el-menu-vertical-demo" @open="handleopen" @close="handleclose" @select="handleselect"
 						 unique-opened router v-show="!collapsed">
 					<div v-for="(item,index) in $router.options.routes" :key="index">
-						<el-submenu :index="index+''" v-if="!item.hidden && item.children.length>1">
+						<el-submenu :index="index+''" v-if="!item.hidden && item.children.length>1&&item.roles.indexOf($store.state.user.type) !== -1">
 							<template slot="title"><i :class="item.iconCls"></i>{{item.name}}</template>
 							<div v-for="child in item.children" :key="child.path">
-								<el-menu-item :index="child.path" v-if="!child.hidden">{{child.name}}</el-menu-item>
+								<el-menu-item :index="child.path" v-if="!child.hidden&&child.meta.roles.indexOf($store.state.user.type) !== -1">{{child.name}}</el-menu-item>
 							</div>
 							
 						</el-submenu>
-						<el-menu-item v-if="item.leaf&&item.children.length>0" :index="item.children[0].path"><i :class="item.iconCls"></i>{{item.children[0].name}}</el-menu-item>
+						<el-menu-item v-if="item.leaf&&item.children.length>0&&item.children[0].meta.roles.indexOf($store.state.user.type) !== -1" :index="item.children[0].path"><i :class="item.iconCls"></i>{{item.children[0].name}}</el-menu-item>
 					</div>
 				</el-menu>
 
@@ -42,15 +42,15 @@
 				<!--导航菜单-折叠后-->
 				<ul class="el-menu el-menu-vertical-demo collapsed" v-show="collapsed" ref="menuCollapsed">
 					<li v-for="(item,index) in $router.options.routes" :key="index" class="el-submenu item">
-						<template v-if="!item.leaf && !item.hidden">
+						<template v-if="!item.leaf && !item.hidden&&item.roles.indexOf($store.state.user.type) !== -1">
 							<div class="el-submenu__title" style="padding-left: 20px;" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"><i :class="item.iconCls"></i></div>
 							<ul class="el-menu submenu" :class="'submenu-hook-'+index" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)">
-								<li v-for="child in item.children" :key="child.path" class="el-menu-item" style="padding-left: 40px;" :class="$route.path==child.path?'is-active':''" @click="$router.push(child.path)">{{child.name}}</li>
+								<li v-for="child in item.children" :key="child.path" class="el-menu-item" style="padding-left: 40px;background:#fff" :class="$route.path==child.path?'is-active':''" @click="$router.push(child.path)">{{child.name}}</li>
 							</ul>
 						</template>
-						<template v-if="!item.hidden && item.leaf">
+						<template v-if="item.children && item.leaf">
 							<li class="el-submenu">
-								<div class="el-submenu__title" style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px;" :class="$route.path==item.children[0].path?'is-active':''" @click="$router.push(item.children[0].path)">
+								<div v-if="item.children[0].meta.roles.indexOf($store.state.user.type) !== -1" class="el-submenu__title" style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px;" :class="$route.path==item.children[0].path?'is-active':''" @click="$router.push(item.children[0].path)">
 									<i :class="item.iconCls"></i>
 								</div>
 							</li>

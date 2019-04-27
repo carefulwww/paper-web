@@ -78,8 +78,15 @@ export default {
   },
   methods: {
     rollOut() {
-      this.$emit('rollOut')
-      this.isShow = false
+      if (this.list.length < 10) {
+        this.$message({
+          type: 'warning',
+          message: '选择的试题不足10题，无法组卷。'
+        })
+      } else {
+        this.$emit('rollOut')
+        this.isShow = false
+      }
     }
   }
 }

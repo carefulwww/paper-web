@@ -49,7 +49,11 @@ router.beforeEach((to, from, next) => {
     if (!store.state.user.isLogin) {
       next({ path: '/login' })
     } else {
-      next()
+      if (to.meta && to.meta.roles && to.meta.roles.indexOf(store.state.user.type) !== -1) {
+        next()
+      } else {
+        next({ path: from.path })
+      }
     }
   }
 })

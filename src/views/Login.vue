@@ -68,7 +68,7 @@
                   type: 'success',
                   message: '登录成功'
                 })
-                vm.$router.push({ path: '/User' })
+                vm.$router.push({ path: '/my' })
               } else {
                 vm.$message({
                   type: 'error',
