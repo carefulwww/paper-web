@@ -18,6 +18,7 @@ import 'codemirror/lib/codemirror.css'
 import '@/assets/css/element.css'
 
 import * as filters from './filters'
+import { Notification } from 'element-ui'
 
 Vue.use(VueCodemirror)
 Vue.use(ElementUI)
@@ -49,10 +50,18 @@ router.beforeEach((to, from, next) => {
     if (!store.state.user.isLogin) {
       next({ path: '/login' })
     } else {
-      if (to.meta && to.meta.roles && to.meta.roles.indexOf(store.state.user.type) !== -1) {
-        next()
+      if (store.state.user.newFlag === '1' && to.path !== '/my') {
+        Notification({
+          title: '提示',
+          message: '密码不安全，请重设密码，否则无法进入系统'
+        })
+        next({ path: '/my' })
       } else {
-        next({ path: from.path })
+        if (to.meta && to.meta.roles && to.meta.roles.indexOf(store.state.user.type) !== -1) {
+          next()
+        } else {
+          next({ path: from.path })
+        }
       }
     }
   }

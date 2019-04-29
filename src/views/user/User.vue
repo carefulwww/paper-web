@@ -166,8 +166,9 @@ export default {
       this.$confirm('是否将该用户密码重置为123456？', '提示', {
         type: 'warning'
       }).then(() => {
-        const data = Object.assign({}, row, { password: '123456' })
+        const data = Object.assign({}, row, { password: '123456', currentId: this.$store.state.user.uuid })
         UserAPI.updateUser(data).then(res => {
+          debugger
           if (res && res.data && res.data.successful) {
             vm.$message({
               type: 'success',

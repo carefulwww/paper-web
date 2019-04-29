@@ -33,7 +33,7 @@ export function login(data) {
 
 export function updateUser(data) {
   return request({
-    url: `/paperWebAPI/user/update`,
+    url: `/paperWebAPI/user/update?currentId=${data.currentId}`,
     method: 'put',
     data
   })

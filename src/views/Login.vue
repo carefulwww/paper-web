@@ -51,7 +51,6 @@
             // NProgress.start();
             var loginParams = { userName: this.ruleForm2.account, password: this.ruleForm2.checkPass }
             this.$store.dispatch('Login', loginParams).then(res => {
-              this.logining = false
               // //NProgress.done();
               // let { msg, code, user } = data;
               // if (code !== 200) {
@@ -76,6 +75,7 @@
                 })
               }
             })
+            this.logining = false
           } else {
             console.log('error submit!!')
             return false

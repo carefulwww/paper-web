@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function addRelation(data) {
   return request({
-    url: `/paperWebAPI/paperQuestionRelation/addRelation`,
+    url: `/paperWebAPI/paperQuestionRelation/bu?questionIds=${data.questionIds}&paperId=${data.paperId}&userId=${data.userId}`,
     method: 'post',
     data
   })

@@ -287,14 +287,17 @@ export default {
       if (paperId) {
         const ids = this.cartList.map(e => e.uuid)
         const data1 = {
-          createUserId: this.$store.state.user.uuid,
+          userId: this.$store.state.user.uuid,
           paperId: paperId,
-          questionId: ids
+          questionIds: ids
         }
         // debugger
         await PaperQuestionAPI.addRelation(data1).then(res => {
           if (res && res.data && res.data.successful) {
-            //
+            this.$message({
+              type: 'success',
+              message: '试卷添加成功'
+            })
           } else {
             this.$message({
               type: 'error',

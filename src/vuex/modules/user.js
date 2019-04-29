@@ -5,7 +5,9 @@ const user = {
     isLogin: false,
     userName: '',
     type: '',
-    uuid: ''
+    uuid: '',
+    nickname: '',
+    newFlag: '' // 1代表新用户
   },
 
   mutations: {
@@ -20,6 +22,12 @@ const user = {
     },
     SET_UUID: (state, uuid) => {
       state.uuid = uuid
+    },
+    SET_NICKNAME: (state, nickname) => {
+      state.nickname = nickname
+    },
+    SET_NEWFLAG: (state, newFlag) => {
+      state.newFlag = newFlag
     }
   },
 
@@ -35,6 +43,8 @@ const user = {
             commit('SET_TYPE', data.type)
             commit('SET_UUID', data.uuid)
             commit('SET_ISLOGIN', true)
+            commit('SET_NICKNAME', data.nickname)
+            commit('SET_NEWFLAG', data.newFlag)
           }
           resolve(response)
         }).catch(error => {
@@ -50,6 +60,8 @@ const user = {
         commit('SET_TYPE', '')
         commit('SET_UUID', '')
         commit('SET_ISLOGIN', false)
+        commit('SET_NICKNAME', '')
+        commit('SET_NEWFLAG', '')
         resolve()
       })
     }

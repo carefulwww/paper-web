@@ -57,11 +57,11 @@
 			</el-table-column>
 
       <el-table-column label="操作" align="center" width="300px" fixed="right">
-        <template>
-          <el-button size="small">详情</el-button>
+        <template slot-scope="scope">
+          <el-button size="small" @click="showDetail(scope.row)">详情</el-button>
           <el-button size="small">下载</el-button>
           <el-button size="small">编辑</el-button>
-          <el-button type="danger" size="small">删除</el-button>
+          <el-button type="danger" size="small" @click="deletePaper(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -73,6 +73,27 @@
         @pagination="getList"
         style="margin-top:20px"
       />
+      <el-dialog
+        :visible.sync="showDialog"
+				title="试卷预览"
+				:before-close="handleClose"
+				style="text-align:center;padding: 0 20px">
+        <div class="prepaper">
+          <el-scrollbar style="height:100%">
+          <div v-for="(v,k,i) in filterListObj" :key="i">
+            <h1>{{k}}</h1>
+            <div v-for="(item,index) in v" :key="index">
+              <p>{{`${index+1}.${item.questionContent}（${item.score}分）`}}</p>
+              <p>{{`选项${item.options}`}}</p>
+            </div>
+          </div>
+          </el-scrollbar>
+        </div>
+        <!-- <div>
+          <el-button type="primary" @click="confirm">确认</el-button>
+          <el-button @click="cancel">取消</el-button>
+        </div> -->
+      </el-dialog>
   </section>
 </template>
 
@@ -92,7 +113,9 @@ export default {
         pageNum: 1,
         pageSize: 10
       },
-      total: 0
+      total: 0,
+      showDialog: false,
+      filterListObj: {}// 试题分组对象
     }
   },
   components: { Pagination },
@@ -121,10 +144,54 @@ export default {
         }
       })
       this.listLoading = false
+    },
+    deletePaper(row) {
+      const vm = this
+      this.$confirm('是否确认删除该试卷', '提示', {
+        type: 'warning'
+      }).then(() => {
+        // debugger
+        PaperAPI.delPaper(row).then(res => {
+          // debugger
+          if (res && res.status === 200) {
+            vm.$message({
+              type: 'success',
+              message: '删除试卷成功'
+            })
+            vm.getList()
+          } else {
+            vm.$message({
+              type: 'error',
+              message: res.data.statusMessage
+            })
+          }
+        })
+      }).catch()
+    },
+    filterQuestions(row) {
+      row.questions.map(e => {
+        if (e.type in this.filterListObj) {
+          this.filterListObj[e.type].push(e)
+        } else {
+          this.$set(this.filterListObj, e.type, [e])
+        }
+      })
+    },
+    showDetail(row) {
+      this.filterQuestions(row)
+      this.showDialog = true
+    },
+    handleClose() {
+      this.showDialog = false
     }
   }
 }
 </script>
 
 <style scoped>
+.prepaper{
+  height:50vh;
+  text-align:left;
+  padding:10px 50px;
+}
 </style>

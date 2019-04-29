@@ -15,9 +15,9 @@
     </el-form>
     <div class="prepaper">
       <el-scrollbar style="height:100%">
-      <div v-for="(v,k,i) in filterListObj">
+      <div v-for="(v,k,i) in filterListObj" :key="i">
         <h1>{{k}}</h1>
-        <div v-for="(item,index) in v">
+        <div v-for="(item,index) in v" :key="index">
           <p>{{`${index+1}.${item.questionContent}（${item.score}分）`}}</p>
           <p>{{`选项${item.options}`}}</p>
         </div>
