@@ -6,6 +6,7 @@ import My from './views/my.vue'
 // import Table from './views/other/Table.vue'
 import have_subject from './views/subject/have_subject.vue'
 import teacher_subject from './views/subject/teacher_subject.vue'
+import chapter from './views/subject/chapter.vue'
 import User from './views/user/User.vue'
 import goodWork from './views/goodWork/goodWork'
 import workDetail from './views/goodWork/workDetail'
@@ -86,7 +87,8 @@ const routes = [
     roles: ['1'],
     children: [
       { path: '/have_subject', component: have_subject, name: '科目库管理', meta: { roles: ['1'] }},
-      { path: '/teacher_subject', component: teacher_subject, name: '科目关联管理', meta: { roles: ['1'] }}
+      { path: '/teacher_subject', component: teacher_subject, name: '科目关联管理', meta: { roles: ['1'] }},
+      { path: '/chapter', component: chapter, name: '章节管理', meta: { roles: ['1'] }}
     ]
   },
   {

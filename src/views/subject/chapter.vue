@@ -1,48 +1,39 @@
 <template>
-  <section>
-    <!--工具条-->
+  <div>
     <el-col :span="24" class="toolbar" style="padding-bottom: 0px">
       <el-form :inline="true">
-        <div style="display:none">
-
         <el-form-item>
-          <el-input v-model="searchName" placeholder="科目名称"></el-input>
+          <el-input v-model="searchName" placeholder="章节名称"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="getList(searchName)">查询</el-button>
+          <el-button type="primary" @click="getList('name')">查询</el-button>
         </el-form-item>
-        </div>
-
-        <!--管理员才可以进行新增操作-->
         <el-form-item>
           <el-button type="primary" @click="handleAdd">新增</el-button>
         </el-form-item>
       </el-form>
     </el-col>
 
-    <!--列表-->
-    <el-table :data="list" highlight-current-row v-loading="listLoading" fit style="width: 100%;">
-      <el-table-column label="序号" align="center" width="65px">
+    <el-table highlight-current-row v-loading="listLoading" :data="chapterList" fit>
+
+			<el-table-column label="序号" align="center" width="65px">
 				<template slot-scope="scope">
 					<span>{{scope.$index+1}}</span>
 				</template>
 			</el-table-column>
-      <!-- <el-table-column label="科目ID" align="center" width="280px">
+
+			<el-table-column label="章节名" align="center">
 				<template slot-scope="scope">
-					<span>{{scope.row.uuid}}</span>
-				</template>
-			</el-table-column> -->
-      <el-table-column label="创建人" align="center" width="280px">
-				<template slot-scope="scope">
-					<span>{{scope.row.name}}</span>
+					<span>{{scope.row.chapterName}}</span>
 				</template>
 			</el-table-column>
-      <el-table-column label="科目名称" align="center">
+
+			<el-table-column label="科目名" align="center">
 				<template slot-scope="scope">
-					<span>{{scope.row.subjectName}}</span>
+					<span>{{scope.row.subject.subjectName}}</span>
 				</template>
 			</el-table-column>
-      <el-table-column label="创建时间" align="center">
+			<el-table-column label="创建时间" align="center">
 				<template slot-scope="scope">
 					<span>{{scope.row.createTime*1000|formatDate('yyyy-MM-dd')}}</span>
 				</template>
@@ -53,13 +44,13 @@
 				</template>
 			</el-table-column>
 
-      <el-table-column label="操作" align="center" width="160px" fixed="right">
-        <template slot-scope="scope">
-          <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-button type="danger" size="small" @click="deleteSubject(scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+			<el-table-column label="操作" width="300px" align="center" fixed="right">
+				<template slot-scope="scope">
+					<el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
+					<el-button size="small" type="danger" @click="deleteChapter(scope.row)">删除</el-button>
+				</template>
+			</el-table-column>
+		</el-table>
     <pagination
         v-show="total>0"
         :total="total"
@@ -74,39 +65,39 @@
 				:before-close="handleClose"
 				style="text-align:center;padding: 0 20px"
 			>
-				<subject-form
-					ref="subjectForm"
+				<chapter-info-form
+					ref="chapterForm"
 					:data="tmpData"
-					:is-created="dialogTitle!=='新增科目'"
-					@add="addSubject"
-					@update="updateSubject"
+					:is-created="dialogTitle!=='新增章节'"
+					@add="addChapter"
+					@update="updateChapter"
 					@close="handleClose"
 				/>
 			</el-dialog>
-  </section>
+  </div>
 </template>
 
 <script>
-import SubjectAPI from '@/api/subject'
+import ChapterAPI from '@/api/chapter'
 import Pagination from '@/components/Pagination'
-import SubjectForm from './components/subjectForm'
+import ChapterInfoForm from './components/chapterForm'
 export default {
   data() {
     return {
       listLoading: false,
-      list: [],
+      chapterList: [],
       listQuery: {
         pageNum: 1,
         pageSize: 10
       },
       total: 0,
+      searchName: '',
       dialogTitle: '',
       showDialog: false,
-      tmpData: {},
-      searchName: ''
+      tmpData: {}
     }
   },
-  components: { Pagination, SubjectForm },
+  components: { Pagination, ChapterInfoForm },
   created() {
     this.getList()
   },
@@ -115,20 +106,17 @@ export default {
       this.listLoading = true
 
       const vm = this
-      if (arg) {
-        this.listQuery = Object.assign({}, this.listQuery, { subjectName: arg })
+      if (arg === 'name') {
+        this.listQuery = Object.assign({}, this.listQuery, { chapterName: this.searchName })
       } else {
-        this.$delete(this.listQuery, 'subjectName')
+        // debugger
+        this.$delete(this.listQuery, 'chapterName')
       }
-      await SubjectAPI.getSubject(this.listQuery).then(res => {
+      await ChapterAPI.getChapter(this.listQuery).then(res => {
         if (res && res.data && res.data.successful) {
           // debugger
-          this.list = res.data.data.list
+          this.chapterList = res.data.data.list
           this.total = res.data.data.total
-          // vm.$message({
-          //   type: 'success',
-          //   message: '用户表加载成功'
-          // })
         } else {
           vm.$message({
             type: 'error',
@@ -138,29 +126,29 @@ export default {
       })
       this.listLoading = false
     },
-    handleAdd() {
-      this.dialogTitle = '新增科目'
-      this.showDialog = true
-      this.$set(this.tmpData, 'createUserId', this.$store.state.user.uuid)
-    },
-    handleEdit(row) {
-      this.dialogTitle = '编辑科目'
-      this.showDialog = true
-      this.tmpData = Object.assign({}, row)
-    },
     handleClose() {
       this.tmpData = {}
       this.showDialog = false
       // debugger
-      this.$refs.subjectForm.$refs.subjectData.resetFields()
+      this.$refs.chapterForm.$refs.chapterInfoData.resetFields()
     },
-    async addSubject(data) {
+    handleAdd() {
+      this.dialogTitle = '新增章节'
+      this.showDialog = true
+      this.$set(this.tmpData, 'createUserId', this.$store.state.user.uuid)
+    },
+    handleEdit(row) {
+      this.dialogTitle = '编辑章节'
+      this.showDialog = true
+      this.tmpData = Object.assign({}, row)
+    },
+    async addChapter(data) {
       const vm = this
-      await SubjectAPI.addSubject(data).then(res => {
+      await ChapterAPI.addChapter(data).then(res => {
         if (res && res.data && res.data.successful) {
           vm.$message({
             type: 'success',
-            message: '科目添加成功'
+            message: '章节添加成功'
           })
           vm.getList()
         } else {
@@ -172,14 +160,14 @@ export default {
       })
       this.handleClose()
     },
-    async updateSubject(data) {
+    async updateChapter(data) {
       const vm = this
       this.$delete(data, 'updateTime')
-      await SubjectAPI.updateSubject(data).then(res => {
+      await ChapterAPI.updateChapter(data).then(res => {
         if (res && res.data && res.data.successful) {
           vm.$message({
             type: 'success',
-            message: '科目更新成功'
+            message: '章节更新成功'
           })
           vm.getList()
         } else {
@@ -191,18 +179,18 @@ export default {
       })
       this.handleClose()
     },
-    deleteSubject(row) {
+    deleteChapter(row) {
       const vm = this
-      this.$confirm('是否确认删除该科目', '提示', {
+      this.$confirm('是否确认删除该章节', '提示', {
         type: 'warning'
       }).then(() => {
         // debugger
-        SubjectAPI.delSubject(row).then(res => {
+        ChapterAPI.delChapter(row).then(res => {
           // debugger
           if (res && res.status === 200) {
             vm.$message({
               type: 'success',
-              message: '删除科目成功'
+              message: '删除章节成功'
             })
             vm.getList()
           } else {
@@ -217,6 +205,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>

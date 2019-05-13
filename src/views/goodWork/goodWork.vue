@@ -16,7 +16,7 @@
     </el-col>
 
     <!--列表-->
-    <el-table highlight-current-row :data="mockData" v-loading="listLoading" style="width: 100%;">
+    <el-table highlight-current-row :data="excellentWorkList" v-loading="listLoading" style="width: 100%;">
       <el-table-column type="selection" style="width: 10%;"></el-table-column>
 
       <el-table-column prop="id" style="width: 10%;" label="ID"></el-table-column>
@@ -36,24 +36,57 @@
         </template>
       </el-table-column>
     </el-table>
+    <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="listQuery.pageNum"
+        :limit.sync="listQuery.pageSize"
+        @pagination="getList"
+        style="margin-top:20px"
+      />
   </section>
 </template>
 
 <script>
+import ExcellentWorkAPI from '@/api/excellentWork'
+import Pagination from '@/components/Pagination'
 export default {
   data() {
     return {
       listLoading: false,
-      mockData:[{
-        id:101,
-        name:'我的作品',
-        subject:'计算机',
-        writer:'小王',
-        time:'2019-03-30'
-      }]
-    };
+      excellentWorkList: [],
+      listQuery: {
+        pageNum: 1,
+        pageSize: 10
+      },
+      total: 0
+    }
+  },
+  components: { Pagination },
+  created() {
+    this.getList()
+  },
+  methods: {
+    async getList() {
+      this.listLoading = true
+
+      const vm = this
+      await ExcellentWorkAPI.getExcellentWork(this.listQuery).then(res => {
+        if (res && res.data && res.data.successful) {
+          // debugger
+          this.excellentWorkList = res.data.data.list
+          this.total = res.data.data.total
+        } else {
+          vm.$message({
+            type: 'error',
+            message: res.data.statusMessage
+          })
+        }
+      })
+      this.listLoading = false
+    }
   }
-};
+}
 </script>
 
 <style scoped>

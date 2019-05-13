@@ -12,6 +12,9 @@
 				<el-form-item>
 					<el-button type="primary" @click="handleAdd">新增</el-button>
 				</el-form-item>
+        <el-form-item>
+					<el-button type="primary" @click="handleExport">导入</el-button>
+				</el-form-item>
 			</el-form>
 		</el-col>
 
@@ -33,6 +36,12 @@
 			<el-table-column label="用户名" align="center">
 				<template slot-scope="scope">
 					<span>{{scope.row.userName}}</span>
+				</template>
+			</el-table-column>
+
+      <el-table-column label="昵称" align="center">
+				<template slot-scope="scope">
+					<span>{{scope.row.nickname}}</span>
 				</template>
 			</el-table-column>
 
@@ -85,6 +94,26 @@
 					@close="handleClose"
 				/>
 			</el-dialog>
+      <el-dialog
+				:visible.sync="showExportDialog"
+				title="导入用户"
+				:before-close="handleExportClose"
+				style="text-align:center;padding: 0 20px"
+			>
+				<el-upload
+          drag
+          ref="upload"
+          action="http://94.191.89.57:8080/import/user"
+          accept=".xlsx"
+          :auto-upload="false"
+          :on-success="handleUploadSuccess"
+          >
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          <div class="el-upload__tip" slot="tip">只能上传excel文件,<a href="http://94.191.89.57:8080/export/downloadUserExcel">点击此处下载用户导入模板excel表</a></div>
+        </el-upload>
+        <el-button style="margin-top: 20px;"  type="primary" @click="submitUpload">上 传</el-button>
+			</el-dialog>
 	</section>
 </template>
 
@@ -107,7 +136,8 @@ export default {
       dialogTitle: '',
       showDialog: false,
       tmpData: {},
-      searchName: ''
+      searchName: '',
+      showExportDialog: false
     }
   },
   components: { Pagination, UserInfoForm },
@@ -123,6 +153,24 @@ export default {
     this.getList()
   },
   methods: {
+    handleUploadSuccess(res, file) {
+      if (res && res.statusCode === 200 && res.successful) {
+        this.$message({
+          message: `上传完毕,成功${res.data.successNum}条，失败${res.data.failNum}条`,
+          type: 'success'
+        })
+        this.getList()
+      } else {
+        this.$message({
+          message: res.statusMessage,
+          type: 'error'
+        })
+      }
+      this.showExportDialog = false
+    },
+    submitUpload() {
+      this.$refs.upload.submit()
+    },
     async getList(arg) {
       this.listLoading = true
 
@@ -161,6 +209,9 @@ export default {
       this.showDialog = true
       this.tmpData = Object.assign({}, row)
     },
+    handleExport() {
+      this.showExportDialog = true
+    },
     resetPassword(row) {
       const vm = this
       this.$confirm('是否将该用户密码重置为123456？', '提示', {
@@ -189,6 +240,9 @@ export default {
       this.showDialog = false
       // debugger
       this.$refs.userForm.$refs.userInfoData.resetFields()
+    },
+    handleExportClose() {
+      this.showExportDialog = false
     },
     async addUser(data) {
       const vm = this

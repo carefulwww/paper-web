@@ -12,6 +12,9 @@
 				<el-form-item>
 					<el-button type="primary" @click="handleAdd">新增</el-button>
 				</el-form-item>
+        <el-form-item>
+					<el-button type="primary" @click="handleExport">导入</el-button>
+				</el-form-item>
 			</el-form>
 		</el-col>
 
@@ -123,6 +126,26 @@
 					@close="handleClose1"
 				/>
 			</el-dialog>
+      <el-dialog
+				:visible.sync="showExportDialog"
+				title="导入试题"
+				:before-close="handleExportClose"
+				style="text-align:center;padding: 0 20px"
+			>
+				<el-upload
+          drag
+          ref="upload"
+          :action="uploadUrl"
+          accept=".xlsx"
+          :auto-upload="false"
+          :on-success="handleUploadSuccess"
+          >
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          <div class="el-upload__tip" slot="tip">只能上传excel文件,<a href="http://94.191.89.57:8080/export/downloadQuestionExcel?subjectId=12312">点击此处下载试题导入模板excel表</a></div>
+        </el-upload>
+        <el-button style="margin-top: 20px;"  type="primary" @click="submitUpload">上 传</el-button>
+			</el-dialog>
 		</template>
 		<shopping-cart :list="cartList" @rollOut="rollOut" />
 	</section>
@@ -154,7 +177,8 @@ export default {
       dialogTitle: '',
       showDialog: false,
       showDialog1: false,
-      tmpData: {}
+      tmpData: {},
+      showExportDialog: false
     }
   },
   components: {
@@ -163,7 +187,36 @@ export default {
     QuestionsForm,
     prePaper
   },
+  computed: {
+    uploadUrl() {
+      return `http://94.191.89.57:8080/import/questions?createId=${this.$store.state.user.uuid}`
+    }
+  },
   methods: {
+    handleExportClose() {
+      this.showExportDialog = false
+    },
+    handleExport() {
+      this.showExportDialog = true
+    },
+    submitUpload() {
+      this.$refs.upload.submit()
+    },
+    handleUploadSuccess(res, file) {
+      if (res && res.statusCode === 200 && res.successful) {
+        this.$message({
+          message: `上传完毕,成功${res.data.successNum}条，失败${res.data.failNum}条`,
+          type: 'success'
+        })
+        this.getList()
+      } else {
+        this.$message({
+          message: res.statusMessage,
+          type: 'error'
+        })
+      }
+      this.showExportDialog = false
+    },
     add(row) {
       // row.isAdd = true
       this.$set(row, 'isAdd', true)
