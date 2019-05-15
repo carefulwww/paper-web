@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div>这是作品详情页 作品id:{{id}}</div>
+    <div>作品:{{work.workName}}</div>
     <codemirror
-      :value="code"
+      :value="work.code"
       :options="{
           mode: 'text/x-csrc',
           indentWithTabs: true,
@@ -18,7 +18,7 @@ import 'codemirror/mode/clike/clike'
 export default {
   data() {
     return {
-      id: '',
+      work: {},
       code: `#include<stdio.h>
 /*分鱼递归函数*/
 int fish(int n, int x)
@@ -47,10 +47,7 @@ int main()
     }
     while(!flag);  /*未找到符合题意的x，继续循环，否则退出循环*/
     return 0;
-}`,
-      editorOption: {
-
-      }
+}`
     }
   },
   computed: {
@@ -59,13 +56,10 @@ int main()
     }
   },
   created() {
-    this.id = this.$route.query.id
-    this.getCode()
+    this.work = this.$route.query.work
   },
   methods: {
-    getCode() {
-      // 通过作品id获得作品代码
-    }
+    //
   }
 }
 </script>

@@ -12,9 +12,9 @@
         <el-form-item>
           <el-button type="primary">查询</el-button>
         </el-form-item>
-        <!--<el-form-item>-->
-        <!--<el-button type="primary">新增</el-button>-->
-        <!--</el-form-item>-->
+        <el-form-item>
+        <el-button type="primary" @click="downloadRecord">下载考场记录表</el-button>
+        </el-form-item>
       </el-form>
     </el-col>
 
@@ -40,27 +40,28 @@
 					<span>{{scope.row.subjectId}}</span>
 				</template>
 			</el-table-column>
-      <el-table-column label="创建人ID" align="center" width="280px">
+      <el-table-column label="创建人" align="center">
 				<template slot-scope="scope">
-					<span>{{scope.row.createUserId}}</span>
+					<span>{{scope.row.user.nickname}}</span>
 				</template>
 			</el-table-column>
-      <el-table-column label="创建时间" align="center">
+      <el-table-column label="创建时间" align="center" width="120px">
 				<template slot-scope="scope">
 					<span>{{scope.row.createTime*1000|formatDate('yyyy-MM-dd')}}</span>
 				</template>
 			</el-table-column>
-			<el-table-column label="更新时间" align="center">
+			<el-table-column label="更新时间" align="center" width="120px">
 				<template slot-scope="scope">
 					<span>{{scope.row.updateTime*1000|formatDate('yyyy-MM-dd')}}</span>
 				</template>
 			</el-table-column>
 
-      <el-table-column label="操作" align="center" width="300px" fixed="right">
+      <el-table-column label="操作" align="center" width="350px" fixed="right">
         <template slot-scope="scope">
           <el-button size="small" @click="showDetail(scope.row)">详情</el-button>
-          <el-button size="small">下载</el-button>
-          <el-button size="small">编辑</el-button>
+          <el-button size="small" @click="downloadPaper(scope.row)">下载试卷</el-button>
+          <!-- <el-button size="small">编辑</el-button> -->
+          <el-button size="small" @click="downloadAns(scope.row)">下载答案</el-button>
           <el-button type="danger" size="small" @click="deletePaper(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -183,6 +184,17 @@ export default {
     },
     handleClose() {
       this.showDialog = false
+    },
+    downloadRecord() {
+      window.open('http://94.191.89.57:8080/export/downloadRecord', '_blank') // 新开窗口下载
+    },
+    downloadAns(row) {
+      const url = `http://94.191.89.57:8080/export/downloadAnswer?paperId=${row.uuid}`
+      window.open(url, '_blank') // 新开窗口下载
+    },
+    downloadPaper(row) {
+      const url = `http://94.191.89.57:8080/export/downloadPaper?paperId=${row.uuid}`
+      window.open(url, '_blank') // 新开窗口下载
     }
   }
 }

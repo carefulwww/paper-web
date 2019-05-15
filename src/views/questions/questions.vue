@@ -142,15 +142,26 @@
           >
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-          <div class="el-upload__tip" slot="tip">只能上传excel文件,<a href="http://94.191.89.57:8080/export/downloadQuestionExcel?subjectId=12312">点击此处下载试题导入模板excel表</a></div>
+          <div class="el-upload__tip" slot="tip">只能上传excel文件</div>
         </el-upload>
-        <el-button style="margin-top: 20px;"  type="primary" @click="submitUpload">上 传</el-button>
+        <el-button style="margin-top: 20px;"  type="primary" @click="submitUpload">上 传</el-button><br>
+        <el-divider><i class="el-icon-download"></i></el-divider>
+        <el-select v-model="subjectId" placeholder="请选择要下载的模板科目">
+          <el-option
+            v-for="item in subjectList"
+            :key="item.uuid"
+            :label="item.subjectName"
+            :value="item.uuid"
+          ></el-option>
+        </el-select><br><br>
+        <a :href="downloadUrl">点击此处下载试题导入模板excel表</a>
 			</el-dialog>
 		</template>
 		<shopping-cart :list="cartList" @rollOut="rollOut" />
 	</section>
 </template>
 <script>
+import SubjectAPI from '@/api/subject.js'
 import QuestionAPI from '@/api/questions'
 import PaperAPI from '@/api/paper'
 import PaperQuestionAPI from '@/api/paperQuestion'
@@ -178,7 +189,9 @@ export default {
       showDialog: false,
       showDialog1: false,
       tmpData: {},
-      showExportDialog: false
+      showExportDialog: false,
+      subjectList: [],
+      subjectId: ''
     }
   },
   components: {
@@ -190,9 +203,36 @@ export default {
   computed: {
     uploadUrl() {
       return `http://94.191.89.57:8080/import/questions?createId=${this.$store.state.user.uuid}`
+    },
+    downloadUrl() {
+      if (this.subjectId) {
+        return `http://94.191.89.57:8080/export/downloadQuestionExcel?subjectId=${this.subjectId}`
+      }else {
+        return '#'
+      }
     }
   },
+  created() {
+    this.getSubjectList()
+  },
   methods: {
+    getSubjectList() {
+      const vm = this
+      const data = {
+        pageNum: 1
+      }
+      SubjectAPI.getSubject(data).then(res => {
+        if (res && res.data && res.data.successful) {
+          vm.subjectList = res.data.data.list
+          // debugger
+        } else {
+          vm.$message({
+            message: '获取科目列表出错',
+            type: 'error'
+          })
+        }
+      })
+    },
     handleExportClose() {
       this.showExportDialog = false
     },

@@ -10,7 +10,7 @@ export function addExcellentWork(data) {
 
 export function delExcellentWork(data) {
   return request({
-    url: `/paperWebAPI/excellentWork/delWork?id=${data.id}`,
+    url: `/paperWebAPI/excellentWork/delWork?id=${data.uuid}`,
     method: 'delete',
     data
   })
