@@ -32,12 +32,12 @@
 					<span>{{scope.row.uuid}}</span>
 				</template>
 			</el-table-column> -->
-      <el-table-column label="教师" align="center" width="280px">
+      <el-table-column label="教师" align="center">
 				<template slot-scope="scope">
 					<span>{{scope.row.teacherName}}</span>
 				</template>
 			</el-table-column>
-      <el-table-column label="科目" align="center" width="280px">
+      <el-table-column label="科目" align="center">
 				<template slot-scope="scope">
 					<span>{{scope.row.subjectName}}</span>
 				</template>

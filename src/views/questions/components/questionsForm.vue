@@ -14,10 +14,26 @@
         <el-input v-model="data.createUserId" disabled/>
       </el-form-item>
       <el-form-item prop="type" label="试题类型">
-        <el-input v-model="data.type"/>
+        <!-- <el-input v-model="data.type"/> -->
+        <el-select v-model="data.type" placeholder="请选择" style="float:left">
+          <el-option
+            v-for="item in questionDic"
+            :key="item.value"
+            :label="item.label"
+            :value="item.label"
+          ></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item prop="subjectId" label="所属科目ID">
-        <el-input v-model="data.subjectId"/>
+      <el-form-item prop="subjectId" label="所属科目">
+        <!-- <el-input v-model="data.subjectId"/> -->
+        <el-select v-model="data.subjectId" placeholder="请选择" style="float:left">
+          <el-option
+            v-for="item in subjectList"
+            :key="item.uuid"
+            :label="item.subjectName"
+            :value="item.uuid"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item prop="questionContent" label="试题内容">
         <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 10}" v-model="data.questionContent"/>
@@ -46,6 +62,8 @@
 import userDic from '@/utils/dic/user'
 import sexDic from '@/utils/dic/sex'
 import nationDic from '@/utils/dic/nation'
+import questionDic from '@/utils/dic/question'
+import SubjectAPI from '@/api/subject.js'
 export default {
   data() {
     return {
@@ -64,7 +82,9 @@ export default {
       },
       sexDic: sexDic,
       nationDic: nationDic,
-      userDic: userDic
+      userDic: userDic,
+      questionDic: questionDic,
+      subjectList: []
     }
   },
   props: {
@@ -77,6 +97,9 @@ export default {
       default: false
     }
   },
+  created() {
+    this.getSubjectList()
+  },
   methods: {
     confirm() {
       if (this.isCreated) {
@@ -87,6 +110,23 @@ export default {
     },
     cancel() {
       this.$emit('close')
+    },
+    getSubjectList() {
+      const vm = this
+      const data = {
+        pageNum: 1
+      }
+      SubjectAPI.getSubject(data).then(res => {
+        if (res && res.data && res.data.successful) {
+          vm.subjectList = res.data.data.list
+          // debugger
+        } else {
+          vm.$message({
+            message: '获取科目列表出错',
+            type: 'error'
+          })
+        }
+      })
     }
   }
 }

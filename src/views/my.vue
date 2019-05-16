@@ -46,6 +46,7 @@ export default{
               type: 'success',
               message: '修改密码成功'
             })
+            this.$store.commit('SET_NEWFLAG', '0')
           } else {
             this.$message({
               type: 'error',

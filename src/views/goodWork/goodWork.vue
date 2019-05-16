@@ -31,13 +31,13 @@
 
       <el-table-column label="所属科目" align="center">
         <template slot-scope="scope">
-          <!-- <span>{{scope.row.subject.name}}</span> -->
+          <span>{{scope.row.subject.subjectName}}</span>
         </template>
       </el-table-column>
 
       <el-table-column label="作者" align="center">
         <template slot-scope="scope">
-          <!-- <span>{{scope.row.user.nickname}}</span> -->
+          <span>{{scope.row.user.nickname}}</span>
         </template>
       </el-table-column>
 
@@ -49,8 +49,11 @@
 
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
-          <el-button size="small" @click="$router.push({path:'/workDetail',query:{work:scope.row}})">编辑</el-button>
-          <el-button type="danger" size="small" @click="deleteGoodWork(scope.row)">删除</el-button>
+          <el-button v-if="$store.state.user.type === '3'" size="small" @click="$router.push({path:'/workDetail',query:{work:scope.row}})">查看</el-button>
+          <div v-else>
+            <el-button size="small" @click="$router.push({path:'/workDetail',query:{work:scope.row}})">编辑</el-button>
+            <el-button type="danger" size="small" @click="deleteGoodWork(scope.row)">删除</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
