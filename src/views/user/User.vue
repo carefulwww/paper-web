@@ -265,6 +265,7 @@ export default {
     async updateUser(data) {
       const vm = this
       this.$delete(data, 'updateTime')
+      this.$set(data, 'currentId', this.$store.state.user.uuid)
       await UserAPI.updateUser(data).then(res => {
         if (res && res.data && res.data.successful) {
           vm.$message({
