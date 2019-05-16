@@ -169,7 +169,7 @@ export default {
     },
     autoPaper() {
       const vm = this
-      if (this.data.pointIds.length === 0) {
+      if (this.pointIds.length === 0) {
         this.$message({
           message: '章节必选',
           type: 'error'
