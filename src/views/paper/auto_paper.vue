@@ -170,14 +170,14 @@ export default {
     autoPaper() {
       const vm = this
       if (this.data.pointIds.length === 0) {
-        this.message({
+        this.$message({
           message: '章节必选',
           type: 'error'
         })
         return false
       }
       if (this.data.typeNum === {}) {
-        this.message({
+        this.$message({
           message: '题型必选',
           type: 'error'
         })
