@@ -2,7 +2,8 @@
   <div>
     <div>
       <span style="font-size:16px;line-height:20px;">作品:{{work.workName}}</span>
-      <el-button v-if="isCodeChange" size="small" type="primary" style="float:right" @click="updataCode">更新</el-button>
+      <el-button v-if="isCodeChange" size="small" type="primary" style="float:right;margin-left:20px" @click="updataCode">更新</el-button>
+      <el-button size="small" type="primary" style="float:right" @click="run">运行</el-button>
     </div>
     <codemirror
       v-model="code"
@@ -13,7 +14,14 @@
           lineNumbers: true,
           readOnly: readOnlyVal,
       }"
-      ref="myEditor"></codemirror>
+      ref="myEditor"
+      ></codemirror>
+      <el-card v-if="consoleVal" style="height:20vh;margin-top:30px">
+        <div slot="header">
+          <span>控制台</span>
+        </div>
+        <pre>{{consoleVal}}</pre>
+      </el-card>
   </div>
 </template>
 
@@ -25,7 +33,8 @@ export default {
     return {
       work: {},
       code: '',
-      isCodeChange: false
+      isCodeChange: false,
+      consoleVal: ''
     }
   },
   computed: {
@@ -65,6 +74,24 @@ export default {
             type: 'success',
             message: '代码更新成功'
           })
+        } else {
+          vm.$message({
+            type: 'error',
+            message: res.data.statusMessage
+          })
+        }
+      })
+    },
+    run() {
+      const vm = this
+      const data = {
+        currentId: this.$store.state.user.uuid,
+        id: this.work.uuid
+      }
+      ExcellentWorkAPI.runCode(data).then(res => {
+        if (res && res.data && res.data.successful) {
+          this.consoleVal = res.data.data.resultCode
+          // debugger
         } else {
           vm.$message({
             type: 'error',

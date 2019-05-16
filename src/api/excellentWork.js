@@ -32,11 +32,20 @@ export function updateExcellentWork(data) {
   })
 }
 
+export function runCode(data) {
+  return request({
+    url: `/paperWebAPI/excellentWork/runCode?currentId=${data.currentId}&id=${data.id}`,
+    method: 'post',
+    data
+  })
+}
+
 const ExcellentWorkAPI = {
   addExcellentWork,
   delExcellentWork,
   getExcellentWork,
-  updateExcellentWork
+  updateExcellentWork,
+  runCode
 }
 
 export default ExcellentWorkAPI

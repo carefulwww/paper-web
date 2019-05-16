@@ -8,9 +8,9 @@
 
 <script>
 export default {
-	name: 'app',
-	components: {
-	}
+  name: 'app',
+  components: {
+  }
 }
 
 </script>
@@ -65,6 +65,6 @@ body {
 }
 
 .vue-codemirror .CodeMirror{
-	height: 80vh !important;
+	height: 60vh !important;
 }
 </style>
