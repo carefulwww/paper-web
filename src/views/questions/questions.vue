@@ -66,9 +66,9 @@
 					<span>{{scope.row.type}}</span>
 				</template>
 			</el-table-column>
-			<el-table-column label="所属科目ID" align="center" width="280px">
+			<el-table-column label="所属科目" align="center" >
 				<template slot-scope="scope">
-					<span>{{scope.row.subjectId}}</span>
+					<span>{{scope.row.subject.subjectName}}</span>
 				</template>
 			</el-table-column>
 			<el-table-column label="创建时间" align="center">
@@ -207,7 +207,7 @@ export default {
     downloadUrl() {
       if (this.subjectId) {
         return `http://94.191.89.57:8080/export/downloadQuestionExcel?subjectId=${this.subjectId}`
-      }else {
+      } else {
         return '#'
       }
     }
