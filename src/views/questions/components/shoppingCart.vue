@@ -51,9 +51,9 @@
 					<span>{{scope.row.type}}</span>
 				</template>
 			</el-table-column>
-			<el-table-column label="所属科目ID" align="center" width="280px">
+			<el-table-column label="所属科目" align="center" width="280px">
 				<template slot-scope="scope">
-					<span>{{scope.row.subjectId}}</span>
+					<span>{{scope.row.subject.subjectName}}</span>
 				</template>
 			</el-table-column>
       </el-table>

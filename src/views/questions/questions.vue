@@ -3,12 +3,12 @@
 		<!--工具条-->
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="filters">
-				<el-form-item>
+				<!-- <el-form-item>
 					<el-input v-model="filters.id" placeholder="所属科目ID"></el-input>
-				</el-form-item>
-				<el-form-item>
+				</el-form-item> -->
+				<!-- <el-form-item>
 					<el-button type="primary" @click="getList('id')">查询</el-button>
-				</el-form-item>
+				</el-form-item> -->
 				<el-form-item>
 					<el-button type="primary" @click="handleAdd">新增</el-button>
 				</el-form-item>
@@ -20,7 +20,7 @@
 
 		<!--列表-->
 		<template>
-			<el-table :data="questionList" v-loading="loading" fit >
+			<el-table :data="questionList" v-loading="loading" fit @filter-change="filterQuestionType">
 				<el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" >
@@ -61,12 +61,12 @@
 					<span>{{scope.row.uuid}}</span>
 				</template>
 			</el-table-column> -->
-			<el-table-column label="试题类型" align="center">
+			<el-table-column label="试题类型" prop="type" column-key="type" align="center" :filters="questionFilters" :filter-multiple="false">
 				<template slot-scope="scope">
 					<span>{{scope.row.type}}</span>
 				</template>
 			</el-table-column>
-			<el-table-column label="所属科目" align="center" >
+			<el-table-column label="所属科目" prop="subject" column-key="subject" align="center" :filters="subjectFilters" :filter-multiple="false">
 				<template slot-scope="scope">
 					<span>{{scope.row.subject.subjectName}}</span>
 				</template>
@@ -169,6 +169,7 @@ import shoppingCart from './components/shoppingCart'
 import Pagination from '@/components/Pagination'
 import QuestionsForm from './components/questionsForm'
 import prePaper from './components/prePaper'
+import QuestionDic from '@/utils/dic/question'
 // import NProgress from 'nprogress'
 export default {
   data() {
@@ -191,7 +192,8 @@ export default {
       tmpData: {},
       showExportDialog: false,
       subjectList: [],
-      subjectId: ''
+      subjectId: '',
+      QuestionDic: QuestionDic
     }
   },
   components: {
@@ -210,6 +212,30 @@ export default {
       } else {
         return '#'
       }
+    },
+    questionFilters() {
+      const tmp = []
+      if (this.QuestionDic) {
+        this.QuestionDic.map(e => {
+          tmp.push({
+            'text': e.label,
+            'value': e.label
+          })
+        })
+      }
+      return tmp
+    },
+    subjectFilters() {
+      const tmp = []
+      if (this.subjectList) {
+        this.subjectList.map(e => {
+          tmp.push({
+            'text': e.subjectName,
+            'value': e.uuid
+          })
+        })
+      }
+      return tmp
     }
   },
   created() {
@@ -445,6 +471,35 @@ export default {
     },
     rollOut() {
       this.showDialog1 = true
+    },
+    filterQuestionType(filters) {
+      console.log(filters)
+      // debugger
+      const vm = this
+      // const data = Object.assign({}, this.listQuery)
+      if (filters.subject) {
+        this.$set(this.listQuery, 'subjectId', filters.subject[0])
+      }
+      if (filters.type) {
+        this.$set(this.listQuery, 'type', filters.type[0])
+      }
+
+      QuestionAPI.getQuestion(this.listQuery).then(res => {
+        if (res && res.data && res.data.successful) {
+          // debugger
+          this.questionList = res.data.data.list
+          this.total = res.data.data.total
+          // vm.$message({
+          //   type: 'success',
+          //   message: '用户表加载成功'
+          // })
+        } else {
+          vm.$message({
+            type: 'error',
+            message: res.data.statusMessage
+          })
+        }
+      })
     }
   },
   mounted() {
