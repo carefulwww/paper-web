@@ -9,8 +9,16 @@
       <el-form-item prop="paperName" label="试卷名">
         <el-input v-model="data.paperName"/>
       </el-form-item>
-      <el-form-item prop="subjectId" label="科目ID">
-        <el-input v-model="data.subjectId"/>
+      <el-form-item prop="subjectId" label="科目">
+        <!-- <el-input v-model="data.subjectId"/> -->
+        <el-select v-model="data.subjectId" placeholder="请选择" style="float:left">
+          <el-option
+            v-for="item in subjectList"
+            :key="item.uuid"
+            :label="item.subjectName"
+            :value="item.uuid"
+          ></el-option>
+        </el-select>
       </el-form-item>
     </el-form>
     <div class="prepaper">
@@ -32,6 +40,7 @@
 </template>
 
 <script>
+import SubjectAPI from '@/api/subject.js'
 export default {
   props: {
     list: {
@@ -50,10 +59,31 @@ export default {
         paperName: [{ required: true, message: '试卷名为必填项', trigger: 'blur' }],
         subjectId: [{ required: true, message: '科目ID为必填项', trigger: 'blur' }]
       },
-      filterListObj: {}
+      filterListObj: {},
+      subjectList: []
     }
   },
+  created() {
+    this.getSubjectList()
+  },
   methods: {
+    getSubjectList() {
+      const vm = this
+      const data = {
+        pageNum: 1
+      }
+      SubjectAPI.getSubject(data).then(res => {
+        if (res && res.data && res.data.successful) {
+          vm.subjectList = res.data.data.list
+          // debugger
+        } else {
+          vm.$message({
+            message: '获取科目列表出错',
+            type: 'error'
+          })
+        }
+      })
+    },
     confirm() {
       this.$emit('add', this.data)
     },
