@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function autoPaper(data) {
   return request({
-    url: `/paperWebAPI/autoPaper/addChapter?createId=${data.createUserId}`,
+    url: `/autoPaper/addChapter?createId=${data.createUserId}`,
     method: 'post',
     data
   })

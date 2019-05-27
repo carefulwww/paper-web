@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function addSubject(data) {
   return request({
-    url: `/paperWebAPI/subject/addSubject`,
+    url: `/subject/addSubject`,
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function addSubject(data) {
 
 export function delSubject(data) {
   return request({
-    url: `/paperWebAPI/subject/delSubject?id=${data.uuid}`,
+    url: `/subject/delSubject?id=${data.uuid}`,
     method: 'delete',
     data
   })
@@ -18,7 +18,7 @@ export function delSubject(data) {
 
 export function getSubject(data) {
   return request({
-    url: `/paperWebAPI/subject/getSubject`,
+    url: `/subject/getSubject`,
     method: 'get',
     params: data
   })
@@ -26,7 +26,7 @@ export function getSubject(data) {
 
 export function updateSubject(data) {
   return request({
-    url: `/paperWebAPI/subject/updateSubject`,
+    url: `/subject/updateSubject`,
     method: 'put',
     data
   })

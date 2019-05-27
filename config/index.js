@@ -28,13 +28,13 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/paperWebAPI': {
-        target: 'http://94.191.89.57:8080',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/paperWebAPI': ''
-        }
-      }
+      // '/paperWebAPI': {
+      //   target: 'http://94.191.89.57:8080',
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/paperWebAPI': ''
+      //   }
+      // }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

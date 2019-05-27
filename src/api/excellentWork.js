@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function addExcellentWork(data) {
   return request({
-    url: `/paperWebAPI/excellentWork/addWork`,
+    url: `/excellentWork/addWork`,
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function addExcellentWork(data) {
 
 export function delExcellentWork(data) {
   return request({
-    url: `/paperWebAPI/excellentWork/delWork?id=${data.uuid}`,
+    url: `/excellentWork/delWork?id=${data.uuid}`,
     method: 'delete',
     data
   })
@@ -18,7 +18,7 @@ export function delExcellentWork(data) {
 
 export function getExcellentWork(data) {
   return request({
-    url: `/paperWebAPI/excellentWork/getWork`,
+    url: `/excellentWork/getWork`,
     method: 'get',
     params: data
   })
@@ -26,7 +26,7 @@ export function getExcellentWork(data) {
 
 export function updateExcellentWork(data) {
   return request({
-    url: `/paperWebAPI/excellentWork/updateWork`,
+    url: `/excellentWork/updateWork`,
     method: 'put',
     data
   })
@@ -34,7 +34,7 @@ export function updateExcellentWork(data) {
 
 export function runCode(data) {
   return request({
-    url: `/paperWebAPI/excellentWork/runCode?currentId=${data.currentId}&id=${data.id}`,
+    url: `/excellentWork/runCode?currentId=${data.currentId}&id=${data.id}`,
     method: 'post',
     data
   })

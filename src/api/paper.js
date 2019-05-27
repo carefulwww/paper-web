@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function addPaper(data) {
   return request({
-    url: `/paperWebAPI/paper/addPaper`,
+    url: `/paper/addPaper`,
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function addPaper(data) {
 
 export function delPaper(data) {
   return request({
-    url: `/paperWebAPI/paper/delPaper?id=${data.uuid}`,
+    url: `/paper/delPaper?id=${data.uuid}`,
     method: 'delete',
     data
   })
@@ -18,7 +18,7 @@ export function delPaper(data) {
 
 export function getPaper(data) {
   return request({
-    url: `/paperWebAPI/paper/getPaper`,
+    url: `/paper/getPaper`,
     method: 'get',
     params: data
   })
@@ -26,7 +26,7 @@ export function getPaper(data) {
 
 export function updatePaper(data) {
   return request({
-    url: `/paperWebAPI/paper/updatePaper`,
+    url: `/paper/updatePaper`,
     method: 'put',
     data
   })

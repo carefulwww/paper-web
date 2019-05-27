@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function addChapter(data) {
   return request({
-    url: `/paperWebAPI/chapter/addChapter`,
+    url: `/chapter/addChapter`,
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function addChapter(data) {
 
 export function delChapter(data) {
   return request({
-    url: `/paperWebAPI/chapter/delChapter?id=${data.uuid}`,
+    url: `/chapter/delChapter?id=${data.uuid}`,
     method: 'delete',
     data
   })
@@ -18,7 +18,7 @@ export function delChapter(data) {
 
 export function getChapter(data) {
   return request({
-    url: `/paperWebAPI/chapter/getChapter`,
+    url: `/chapter/getChapter`,
     method: 'get',
     params: data
   })
@@ -26,7 +26,7 @@ export function getChapter(data) {
 
 export function updateChapter(data) {
   return request({
-    url: `/paperWebAPI/chapter/updateChapter`,
+    url: `/chapter/updateChapter`,
     method: 'put',
     data
   })

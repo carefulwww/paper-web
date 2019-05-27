@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function addRelation(data) {
   return request({
-    url: `/paperWebAPI/paperQuestionRelation/bu?questionIds=${data.questionIds}&paperId=${data.paperId}&userId=${data.userId}`,
+    url: `/paperQuestionRelation/bu?questionIds=${data.questionIds}&paperId=${data.paperId}&userId=${data.userId}`,
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function addRelation(data) {
 
 export function delRelation(data) {
   return request({
-    url: `/paperWebAPI/paperQuestionRelation/delRelation?id=${data.uuid}`,
+    url: `/paperQuestionRelation/delRelation?id=${data.uuid}`,
     method: 'delete',
     data
   })
@@ -18,7 +18,7 @@ export function delRelation(data) {
 
 export function getRelation(data) {
   return request({
-    url: `/paperWebAPI/paperQuestionRelation/getRelation`,
+    url: `/paperQuestionRelation/getRelation`,
     method: 'get',
     params: data
   })
@@ -26,7 +26,7 @@ export function getRelation(data) {
 
 export function updateRelation(data) {
   return request({
-    url: `/paperWebAPI/paperQuestionRelation/updateRelation`,
+    url: `/paperQuestionRelation/updateRelation`,
     method: 'put',
     data
   })
