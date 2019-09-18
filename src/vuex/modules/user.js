@@ -1,8 +1,8 @@
 import UserAPI from '@/api/user'
+import { setToken, removeToken } from '../../utils/auth'
 
 const user = {
   state: {
-    isLogin: false,
     userName: '',
     type: '',
     uuid: '',
@@ -13,9 +13,6 @@ const user = {
   mutations: {
     SET_USERNAME: (state, userName) => {
       state.userName = userName
-    },
-    SET_ISLOGIN: (state, isLogin) => {
-      state.isLogin = isLogin
     },
     SET_TYPE: (state, type) => {
       state.type = type
@@ -42,9 +39,10 @@ const user = {
             commit('SET_USERNAME', data.userName)
             commit('SET_TYPE', data.type)
             commit('SET_UUID', data.uuid)
-            commit('SET_ISLOGIN', true)
             commit('SET_NICKNAME', data.nickname)
             commit('SET_NEWFLAG', data.newFlag)
+            // 此处setToken应该传入后端返回的token值，但目前后端没有返回token，所以暂取userName
+            setToken(data.userName)
           }
           resolve(response)
         }).catch(error => {
@@ -59,9 +57,9 @@ const user = {
         commit('SET_USERNAME', '')
         commit('SET_TYPE', '')
         commit('SET_UUID', '')
-        commit('SET_ISLOGIN', false)
         commit('SET_NICKNAME', '')
         commit('SET_NEWFLAG', '')
+        removeToken()
         resolve()
       })
     }

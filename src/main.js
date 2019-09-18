@@ -19,6 +19,7 @@ import '@/assets/css/element.css'
 
 import * as filters from './filters'
 import { Notification } from 'element-ui'
+import { getToken } from './utils/auth'
 
 Vue.use(VueCodemirror)
 Vue.use(ElementUI)
@@ -47,7 +48,7 @@ router.beforeEach((to, from, next) => {
   if (to.path === '/login') {
     next()
   } else {
-    if (!store.state.user.isLogin) {
+    if (!getToken()) {
       next({ path: '/login' })
     } else {
       if (store.state.user.newFlag === '1' && to.path !== '/my') {
@@ -57,7 +58,11 @@ router.beforeEach((to, from, next) => {
         })
         next({ path: '/my' })
       } else {
-        if (to.meta && to.meta.roles && to.meta.roles.indexOf(store.state.user.type) !== -1) {
+        if (
+          to.meta &&
+                    to.meta.roles &&
+                    to.meta.roles.indexOf(store.state.user.type) !== -1
+        ) {
           next()
         } else {
           next({ path: from.path })
@@ -79,4 +84,3 @@ new Vue({
   // components: { App }
   render: h => h(App)
 }).$mount('#app')
-
